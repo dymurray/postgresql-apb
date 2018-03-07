@@ -1,0 +1,37 @@
+FROM ansible-runner
+
+LABEL "com.redhat.apb.spec"=\
+"dmVyc2lvbjogMS4wCm5hbWU6IHBvc3RncmVzcWwtYXBiCmRlc2NyaXB0aW9uOiBTQ0wgUG9zdGdy\
+ZVNRTCBhcGIgaW1wbGVtZW50YXRpb24KYmluZGFibGU6IHRydWUKYXN5bmM6IG9wdGlvbmFsCm1l\
+dGFkYXRhOgogIGxvbmdEZXNjcmlwdGlvbjogQW4gYXBiIHRoYXQgZGVwbG95cyBwb3N0Z3Jlc3Fs\
+IDkuNCwgOS41LCBvciA5LjYuCiAgZGlzcGxheU5hbWU6IFBvc3RncmVTUUwgKEFQQikKcGxhbnM6\
+CiAgLSBuYW1lOiBkZWZhdWx0CiAgICBkZXNjcmlwdGlvbjogQSBzaW5nbGUgREIgc2VydmVyIHdp\
+dGggbm8gc3RvcmFnZQogICAgZnJlZTogdHJ1ZQogICAgbWV0YWRhdGE6CiAgICAgIGRpc3BsYXlO\
+YW1lOiBEZXZlbG9wbWVudAogICAgICBsb25nRGVzY3JpcHRpb246IFRoaXMgcGxhbiBwcm92aWRl\
+cyBhIHNpbmdsZSBub24tSEEgUG9zdGdyZVNRTCBzZXJ2ZXIgd2l0aG91dCBwZXJzaXN0ZW50IHN0\
+b3JhZ2UKICAgIHBhcmFtZXRlcnM6CiAgICAgIC0gbmFtZTogcG9zdGdyZXNxbF9kYXRhYmFzZQog\
+ICAgICAgIGRlZmF1bHQ6IGFkbWluCiAgICAgICAgdHlwZTogc3RyaW5nCiAgICAgICAgdGl0bGU6\
+IFBvc3RncmVTUUwgRGF0YWJhc2UgTmFtZQogICAgICAgIHJlcXVpcmVkOiB0cnVlCiAgICAgIC0g\
+bmFtZTogcG9zdGdyZXNxbF91c2VyCiAgICAgICAgZGVmYXVsdDogYWRtaW4KICAgICAgICB0aXRs\
+ZTogUG9zdGdyZVNRTCBVc2VyCiAgICAgICAgdHlwZTogc3RyaW5nCiAgICAgICAgbWF4bGVuZ3Ro\
+OiA2MwogICAgICAgIHJlcXVpcmVkOiB0cnVlCiAgICAgIC0gbmFtZTogcG9zdGdyZXNxbF9wYXNz\
+d29yZAogICAgICAgIHR5cGU6IHN0cmluZwogICAgICAgIGRlc2NyaXB0aW9uOiBBIHJhbmRvbSBh\
+bHBoYW51bWVyaWMgc3RyaW5nIGlmIGxlZnQgYmxhbmsKICAgICAgICB0aXRsZTogUG9zdGdyZVNR\
+TCBQYXNzd29yZAogICAgICAgIGRpc3BsYXlfdHlwZTogcGFzc3dvcmQKICAgICAgICByZXF1aXJl\
+ZDogdHJ1ZQogICAgICAtIG5hbWU6IHBvc3RncmVzcWxfdmVyc2lvbgogICAgICAgIGRlZmF1bHQ6\
+ICc5LjYnCiAgICAgICAgZW51bTogWyc5LjYnLCAnOS41JywgJzkuNCddCiAgICAgICAgdHlwZTog\
+ZW51bQogICAgICAgIHRpdGxlOiBQb3N0Z3JlU1FMIFZlcnNpb24KICAgICAgICByZXF1aXJlZDog\
+dHJ1ZQoK"
+
+RUN git clone https://github.com/openshift/openshift-restclient-python
+RUN cd openshift-restclient-python \
+    && pip install -r requirements.txt \
+    && python setup.py install
+
+RUN echo "localhost ansible_connection=local" > /etc/ansible/hosts \
+    && echo '[defaults]' > /etc/ansible/ansible.cfg \
+    && echo 'library = /usr/share/ansible/openshift' >> /etc/ansible/ansible.cfg
+
+ADD playbooks /runner/project/
+COPY . /etc/ansible/roles/postgresql-apb
+ADD .kube /root/.kube

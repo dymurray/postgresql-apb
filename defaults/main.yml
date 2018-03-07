@@ -1,0 +1,7 @@
+---
+# defaults file for postgresql-apb
+postgresql_database: admin
+postgresql_user: admin
+postgresql_password: changeme
+postgresql_version: '9.6'
+namespace: postgresql
