@@ -1,3 +1,5 @@
 ---
 - include_tasks: provision.yml
   when: apb_action == 'provision'
+- include_tasks: deprovision.yml
+  when: apb_action == 'deprovision'

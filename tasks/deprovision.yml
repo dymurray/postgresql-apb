@@ -1,0 +1,12 @@
+---
+- name: Create postgresql service
+  k8s_v1_service:
+    name: postgresql
+    namespace: '{{ namespace }}'
+    state: absent
+
+- name: Create PostgreSQL Deployment Config
+  openshift_v1_deployment_config:
+    name: postgresql
+    namespace: '{{ namespace }}'
+    state: absent

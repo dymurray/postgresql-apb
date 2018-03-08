@@ -5,5 +5,6 @@
   vars:
     apb_action: deprovision
   roles:
+  - role: ansible.kubernetes-modules
   - role: postgresql-apb
     
